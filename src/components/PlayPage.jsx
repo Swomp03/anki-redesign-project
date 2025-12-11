@@ -1,8 +1,8 @@
 import './componentStyles/PlayPage.css';
 
-import React, {useState} from 'react';
-import {useParams, useNavigate} from 'react-router-dom';
-import {loadData} from '../utils/localStorage';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { loadData } from '../utils/localStorage';
 
 import returnArrow from "../assets/icons/arrow_back.svg";
 import arrowBack from "../assets/icons/arrow_back_with_tail.svg";
@@ -11,15 +11,22 @@ import arrowForward from "../assets/icons/arrow_forward_with_tail.svg";
 // import visibilityOff from "../assets/icons/visibility_off.svg";
 
 const PlayPage = () => {
-    const {folderId, deckId} = useParams();
+    const { folderId, deckId } = useParams();
     const navigate = useNavigate();
 
-    const data = loadData();
-    const folder = data.find(f => f.id === folderId);
-    const foundDeck = folder?.decks.find(d => d.id === deckId);
-
+    const [foundDeck, setFoundDeck] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showAnswer, setShowAnswer] = useState(false);
+
+    useEffect(() => {
+        loadData().then(data => {
+            const folder = data.find(f => f.id === folderId);
+            if (folder) {
+                const deck = folder.decks.find(d => d.id === deckId);
+                setFoundDeck(deck);
+            }
+        });
+    }, [folderId, deckId]);
 
     const handleNext = () => {
         if (currentIndex < foundDeck.cards.length - 1) {
@@ -81,11 +88,15 @@ const PlayPage = () => {
         setShowAnswer(!showAnswer);
     };
 
+    if (!foundDeck) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div id="play-page" className="page-container">
             <button id="return-button" className="large-btn default-btn img-btn" title="Return to the previous page"
-                    onClick={() => navigate(-1)}>
-                <img src={returnArrow} alt="Back arrow"/>
+                onClick={() => navigate(-1)}>
+                <img src={returnArrow} alt="Back arrow" />
                 Return
             </button>
 
@@ -108,14 +119,14 @@ const PlayPage = () => {
 
                 <div id="navigation">
                     <button className="default-btn img-btn" onClick={handlePrev} disabled={currentIndex === 0}>
-                        <img src={arrowBack} alt="Back arrow"/>
+                        <img src={arrowBack} alt="Back arrow" />
                         Prev
                     </button>
                     <span>{currentIndex + 1}/{foundDeck.cards.length}</span>
                     <button className="default-btn img-btn" onClick={handleNext}
-                            disabled={currentIndex === foundDeck.cards.length - 1}>
+                        disabled={currentIndex === foundDeck.cards.length - 1}>
                         Next
-                        <img src={arrowForward} alt="Forward arrow"/>
+                        <img src={arrowForward} alt="Forward arrow" />
                     </button>
                 </div>
             </div>

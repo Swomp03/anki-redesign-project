@@ -1,8 +1,8 @@
 import "./componentStyles/EditModal.css";
 
-import {saveFolders, createNewFolder, loadData} from "../utils/localStorage.js";
-import {EditFolderCard, AddFolderCard} from "./EditFoldersModalCards.jsx";
-import {useState} from "react";
+import { saveFolders, createNewFolder, loadData } from "../utils/localStorage.js";
+import { EditFolderCard, AddFolderCard } from "./EditFoldersModalCards.jsx";
+import { useState, useEffect } from "react";
 
 import cancel from "../assets/icons/cancel.svg";
 import save from "../assets/icons/save.svg";
@@ -10,7 +10,11 @@ import save from "../assets/icons/save.svg";
 
 const EditFoldersModal = (props) => {
     // Must call loadData and not pass props.folders to prevent references causing side effects in the UI
-    const [folders, setFolders] = useState(loadData());
+    const [folders, setFolders] = useState([]);
+
+    useEffect(() => {
+        loadData().then(data => setFolders(data));
+    }, []);
 
     const addNewFolder = () => {
         // Create a new folder at the end of the other folders, with the default blank placeholder text
@@ -124,7 +128,7 @@ const EditFoldersModal = (props) => {
 
     const updateName = (folderId, newName) => {
         setFolders(folders.map(folder =>
-            folder.id === folderId ? {...folder, name: newName} : folder
+            folder.id === folderId ? { ...folder, name: newName } : folder
         ));
     }
 
@@ -134,10 +138,10 @@ const EditFoldersModal = (props) => {
             props.toggleVisibility();
     }
 
-    const saveEdits = (event) => {
+    const saveEdits = async (event) => {
         event.preventDefault();
 
-        saveFolders(folders);
+        await saveFolders(folders);
         props.updateFolders(folders); // Push the local changes to the Home page
         props.toggleVisibility();
     }
@@ -150,13 +154,13 @@ const EditFoldersModal = (props) => {
                 <div id="modal-body">
                     <div id="modal-header">
                         <button type="button" className={"header-btn modal-btn default-btn img-btn"}
-                                onClick={() => cancelEdits()}>
-                            <img src={cancel} alt="Cancel icon"/>
+                            onClick={() => cancelEdits()}>
+                            <img src={cancel} alt="Cancel icon" />
                             Cancel
                         </button>
                         <h1>Edit Folders</h1>
                         <button type="submit" className={"header-btn primary-btn img-btn"} form="folders-container">
-                            <img src={save} alt="Save icon"/>
+                            <img src={save} alt="Save icon" />
                             Save
                         </button>
                     </div>
@@ -164,11 +168,11 @@ const EditFoldersModal = (props) => {
                     <form id="folders-container" className="group-container" onSubmit={saveEdits}>
                         {folders.map((folder, index) => (
                             <EditFolderCard key={index} folder={folder} currIndex={index} maxIndex={folders.length}
-                                            updateName={updateName} increaseIndex={increaseIndex}
-                                            decreaseIndex={decreaseIndex} moveFolder={moveFolder}
-                                            updatePosition={updatePosition} removeFolder={removeFolder}/>
+                                updateName={updateName} increaseIndex={increaseIndex}
+                                decreaseIndex={decreaseIndex} moveFolder={moveFolder}
+                                updatePosition={updatePosition} removeFolder={removeFolder} />
                         ))}
-                        <AddFolderCard addFolder={addNewFolder}/>
+                        <AddFolderCard addFolder={addNewFolder} />
                     </form>
                 </div>
             </div>

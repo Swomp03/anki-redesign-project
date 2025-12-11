@@ -1,8 +1,8 @@
 import "./componentStyles/EditModal.css";
 
-import {loadData, addFolder} from "../utils/localStorage.js";
-import {NewFolderCard} from "./EditFoldersModalCards.jsx";
-import {useState} from "react";
+import { loadData, addFolder } from "../utils/localStorage.js";
+import { NewFolderCard } from "./EditFoldersModalCards.jsx";
+import { useState } from "react";
 
 import cancel from "../assets/icons/cancel.svg";
 import plus from "../assets/icons/plus.svg";
@@ -17,12 +17,13 @@ const AddNewFolderModal = (props) => {
             props.toggleVisibility();
     }
 
-    const saveEdits = (event) => {
+    const saveEdits = async (event) => {
         event.preventDefault();
 
-        addFolder(folderName);
+        await addFolder(folderName);
 
-        props.updateFolders(loadData()); // Push the changes to the Home page
+        const data = await loadData();
+        props.updateFolders(data); // Push the changes to the Home page
         props.toggleVisibility();
     }
 
@@ -34,19 +35,19 @@ const AddNewFolderModal = (props) => {
                 <div id="modal-body">
                     <div id="modal-header">
                         <button type="button" className={"header-btn modal-btn default-btn img-btn"}
-                                onClick={() => cancelEdits()}>
-                            <img src={cancel} alt="Cancel icon"/>
+                            onClick={() => cancelEdits()}>
+                            <img src={cancel} alt="Cancel icon" />
                             Cancel
                         </button>
                         <h1>Add Folder</h1>
                         <button type="submit" className={"header-btn primary-btn img-btn"} form="folders-container">
-                            <img src={plus} alt="Plus icon"/>
+                            <img src={plus} alt="Plus icon" />
                             Add
                         </button>
                     </div>
 
                     <form id="folders-container" className="group-container" onSubmit={saveEdits}>
-                        <NewFolderCard folderName={folderName} setFolderName={setFolderName}/>
+                        <NewFolderCard folderName={folderName} setFolderName={setFolderName} />
                     </form>
                 </div>
             </div>

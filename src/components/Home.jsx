@@ -17,14 +17,14 @@ const Home = () => {
     const [folders, setFolders] = useState([]);
     // const [isEditMode, setIsEditMode] = useState(false);
     // const [newPositions, setNewPositions] = useState({});
-    
+
     const { state: editFolderModalVisible, toggle: toggleEditFolderModalVisibility } = useToggle();
     const { state: newFolderModalVisible, toggle: toggleNewFolderModalVisibility } = useToggle();
 
     usePageTitle("Home | Anki+");
 
     useEffect(() => {
-        setFolders(loadData());
+        loadData().then(data => setFolders(data));
     }, []);
 
     /*const toggleEditMode = () => {
@@ -108,7 +108,7 @@ const Home = () => {
     const updateFolders = (updatedFolders) => {
         setFolders(updatedFolders);
     };
-    
+
     return (
         <>
             {editFolderModalVisible &&
@@ -123,15 +123,15 @@ const Home = () => {
                 {/*    {isEditMode ? " Save Layout" : " Edit Layout"}*/}
                 {/*</button>*/}
                 <button id="edit-folder-button" className="default-btn img-btn" title="Edit the folder layout"
-                        onClick={toggleEditFolderModalVisibility}>
-                    <img src={edit} alt="Edit folder icon"/>
+                    onClick={toggleEditFolderModalVisibility}>
+                    <img src={edit} alt="Edit folder icon" />
                     Edit Folders
                 </button>
 
                 <h1>Decks</h1>
 
                 <button id="new-folder-button" className="default-btn img-btn" onClick={toggleNewFolderModalVisibility}>
-                    <img src={plusIcon} alt="Plus icon"/>
+                    <img src={plusIcon} alt="Plus icon" />
                     New Folder
                 </button>
             </div>

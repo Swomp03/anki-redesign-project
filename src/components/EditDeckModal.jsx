@@ -1,8 +1,8 @@
 import "./componentStyles/EditModal.css";
 
-import {createNewCard, saveCards} from "../utils/localStorage.js";
-import {AddDeckCard, EditDeckCard} from "./EditDeckModalCards.jsx";
-import {useState} from "react";
+import { createNewCard, saveCards } from "../utils/localStorage.js";
+import { AddDeckCard, EditDeckCard } from "./EditDeckModalCards.jsx";
+import { useState } from "react";
 
 import cancel from "../assets/icons/cancel.svg"
 import save from "../assets/icons/save.svg"
@@ -145,28 +145,31 @@ const EditDeckModal = (props) => {
             props.toggleVisibility();
     }
 
-    const saveEdits = (event) => {
+    const saveEdits = async (event) => {
         event.preventDefault();
 
-        saveCards(props.folderId, props.deckId, cards);
+        await saveCards(props.folderId, props.deckId, cards);
+        if (props.onSave) {
+            await props.onSave();
+        }
         props.toggleVisibility();
     }
 
     return (
         <div id="modal-root" className="static">
-            <div id="modal-background" onClick={() => cancelEdits()}/>
+            <div id="modal-background" onClick={() => cancelEdits()} />
 
             <div id="modal-container">
                 <div id="modal-body">
                     <div id="modal-header">
                         <button type="button" className="header-btn modal-btn default-btn img-btn"
-                                onClick={() => cancelEdits()}>
-                            <img src={cancel} alt="Cancel icon"/>
+                            onClick={() => cancelEdits()}>
+                            <img src={cancel} alt="Cancel icon" />
                             Cancel
                         </button>
                         <h1>Edit Deck</h1>
                         <button type="submit" className="header-btn primary-btn img-btn" form="cards-container">
-                            <img src={save} alt="Save icon"/>
+                            <img src={save} alt="Save icon" />
                             Save
                         </button>
                     </div>
@@ -174,11 +177,11 @@ const EditDeckModal = (props) => {
                     <form id="cards-container" className="group-container" onSubmit={saveEdits}>
                         {cards.map((card, index) => (
                             <EditDeckCard key={index} card={card} currIndex={index} maxIndex={cards.length}
-                                                updateValue={updateValue} increaseIndex={increaseIndex}
-                                                decreaseIndex={decreaseIndex} moveCard={moveCard}
-                                                updatePosition={updatePosition} removeCard={removeCard}/>
+                                updateValue={updateValue} increaseIndex={increaseIndex}
+                                decreaseIndex={decreaseIndex} moveCard={moveCard}
+                                updatePosition={updatePosition} removeCard={removeCard} />
                         ))}
-                        <AddDeckCard addNewCard={addNewCard}/>
+                        <AddDeckCard addNewCard={addNewCard} />
                     </form>
                 </div>
             </div>
